@@ -1,54 +1,42 @@
 #include "sort.h"
 
 /**
- * swap_nodes - Swaps two nodes in a doubly linked list.
- *
- * @node_a: First node to be swapped
- * @node_b: Second node to be swapped
- *
- * Return: void
- */
-void swap_nodes(listint_t *node_a, listint_t *node_b)
-{
-	if (node_a->prev)
-		node_a->prev->next = node_b;
-	if (node_b->next)
-		node_b->next->prev = node_a;
-	node_a->next = node_b->next;
-	node_b->prev = node_a->prev;
-	node_a->prev = node_b;
-	node_b->next = node_a;
-}
-
-/**
- * insertion_sort_list - Sorts a doubly linked list of integers
- * in ascending order using the Insertion sort algorithm.
+ * insertion_sort_list - Sorts a doubly linked list of integers in
+ * ascending order using the Insertion sort algorithm.
  *
  * @list: Pointer to the head of the doubly linked list
  */
-
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *a, *b;
+	listint_t *current, *prev, *temp;
 
-	if (list != NULL || *list != NULL || (*list)->next != NULL)
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
-	a = (*list)->next;
-	while (a)
+
+	current = (*list)->next;
+	while (current != NULL)
 	{
-		b = a;
-		a = a->next;
-		while(b && b->prev)
+		temp = current;
+		prev = current->prev;
+
+		while (prev != NULL && prev->n > temp->n)
 		{
-			if (b->prev->n > b->n)
-			{
-				swap_nodes(b->prev, b);
-				if (!b->prev)
-					*list = b;
-				print_list((const listint_t *)*list);
-			}
+			if (temp->next != NULL)
+				temp->next->prev = prev;
+			prev->next = temp->next;
+			temp->next = prev;
+
+			if (prev->prev != NULL)
+				prev->prev->next = temp;
 			else
-				b = b->prev;
+				*list = temp;
+
+			temp->prev = prev->prev;
+			prev->prev = temp;
+
+			print_list(*list);
+			prev = temp->prev;
 		}
+		current = current->next;
 	}
 }
